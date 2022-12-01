@@ -1,25 +1,31 @@
-var socket = io();
+const socket = io();
 
-var direction = "right";
+let direction = "left";
 
 document.addEventListener("keydown", function (e) {
   if (e.keyCode == "39" && direction !== "left") {
-    direction = "right"; // Поменяет направление на право
+    direction = "right";
+    // Поменяет направление на право
   } // Если нажата стрелочка вниз
-  if (e.keyCode == "40" && direction !== "top") {
-    direction = "down"; // Поменяет направление вниз
+  if (e.keyCode == "40" && direction !== "up") {
+    direction = "down";
   } // Если нажата стрелочка налево
   if (e.keyCode == "37" && direction !== "right") {
-    direction = "left"; // Поменяет направление налево
+    direction = "left";
   } // Если нажата стрелочка верх
   if (e.keyCode == "38" && direction !== "down") {
-    direction = "up"; // Поменяет направление верх
+    direction = "up";
+  }
+  if (e.keyCode == "32") {
+    if (direction != "none") {
+      direction = "none";
+    } else window.location.reload();
   }
 });
 
 setInterval(function () {
   socket.emit("direction", direction);
-}, 1000 / 60);
+}, 1000 / 5); // speed
 
 const canvas = document.getElementById("canvas");
 
@@ -30,7 +36,7 @@ socket.once("set sizes", function (width, height) {
 const context = canvas.getContext("2d");
 
 socket.on("game over", function () {
-  window.location.reload();
+  // direction = "death";
 });
 
 socket.on("state", function (snake, food, grid) {
