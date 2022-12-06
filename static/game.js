@@ -17,9 +17,9 @@ document.addEventListener("keydown", function (e) {
     direction = "up";
   }
   if (e.keyCode == "32") {
-    if (direction != "none") {
-      direction = "none";
-    } else window.location.reload();
+    if (!direction.includes("!")) {
+      direction += "!";
+    } else direction = direction.replace('!', '');
   }
 });
 
@@ -36,19 +36,16 @@ socket.once("set sizes", function (width, height) {
 const context = canvas.getContext("2d");
 
 socket.on("game over", function () {
-  // direction = "death";
+  window.location.reload();
 });
 
 socket.on("state", function (snake, food, grid) {
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.fillStyle = "green";
-  snake.forEach((cell) => {
+  snake.body.forEach((cell) => {
     context.fillRect(cell.x, cell.y, grid, grid);
   });
-  context.fillStyle = "blue";
-  context.fillRect(snake[0].x, snake[0].y, grid, grid);
-  context.fill();
   context.fillStyle = "red";
-  context.fillRect(food.x, food.y, grid, grid);
+  context.fillRect(food.foodCoordinates.x, food.foodCoordinates.y, grid, grid);
   context.fill();
 });
